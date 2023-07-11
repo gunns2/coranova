@@ -68,6 +68,25 @@ bootstrap_V <- function(dat_list, B, num_pops, outcome, measures){
 
 
 #when group == 1 only performs within test, when nscores = 2 provides CI
+#' Perform Coranova
+#'
+#' @param dat_list list of data frames, where each data frame refers to a separate population sample
+#' @param outcome name of outcome variable (must be common across dataframes in dat_list)
+#' @param measures names of measures to be compared
+#' @param method whether to use parametric or bootstrap to determine covariance
+#' matrix of measures' correlation with outcome
+#' @param B number of bootstrap samples
+#'
+#' @return results of coranova test
+#' @export
+#'
+#' @examples
+#' \dontrun{mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)}
+#' \dontrun{datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))}
+#' \dontrun{datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))}
+#' \dontrun{a <- list(cor(datA), cor(datB))}
+#' \dontrun{perform_coranova(a, "V1", c("V2", "V3"), "parametric")}
+#'
 perform_coranova <- function(dat_list, outcome, measures, method, B){
   if(typeof(dat_list[[1]]) == "double"){
     dat_list <- list(dat_list)
@@ -188,16 +207,13 @@ coranova_perm_helper <- function(dat_list, n, outcome, measures, method, B, stat
   if(stat == "SB"){
     CB <- generate_linear_contrasts(g, m, "between")
     SB <- t(CB%*%R)%*%solve(CB%*%V%*%t(CB))%*%(CB%*%R)
-    #pB <- pchisq(as.numeric(SB), g-1,  lower.tail = F)
     return(SB)}
   if(stat == "SW"){
     CW <- generate_linear_contrasts(g, m, "within")
     SW <-  t(CW%*%R)%*%solve(CW%*%V%*%t(CW))%*%(CW%*%R)
-    #pW <- pchisq(as.numeric(SW), p-2,  lower.tail = F)
     return(SW)}
   if(stat == "SI"){
     CI <-  generate_linear_contrasts(g, m, "interaction")
     SI <- t(CI%*%R)%*%solve(CI%*%V%*%t(CI))%*%(CI%*%R)
-    #pI <- pchisq(as.numeric(SI), (p-2)*(g-1),  lower.tail = F)
     return(SI)}
 }
