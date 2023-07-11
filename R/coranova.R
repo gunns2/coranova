@@ -1,3 +1,18 @@
+#' Populate Sample Correlation Vector
+#'
+#' @param cormat_list list of correlation matrices, one for each sample
+#' @param outcome name of outcome variable
+#' @param measures name of measure variables
+#'
+#' @return vector of correlations with measures and outcome variable
+#' @export
+#'
+#' @examples
+#' \dontrun{mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)}
+#' \dontrun{datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))}
+#' \dontrun{datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))}
+#' \dontrun{a <- list(cor(datA), cor(datB))}
+#' \dontrun{populate_R(a, "V1", c("V2", "V3"))}
 populate_R <- function(cormat_list, outcome, measures){
   R <- lapply(cormat_list, getVals, outcome = outcome, measures = measures)
   return(unlist(R))
