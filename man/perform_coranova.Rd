@@ -19,7 +19,7 @@ matrix of measures' correlation with outcome}
 \item{B}{number of bootstrap samples}
 }
 \value{
-results of coranova test
+results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI
 }
 \description{
 Perform Coranova
