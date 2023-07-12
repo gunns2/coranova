@@ -3,9 +3,6 @@
 #' @param dat_list list of data frames, where each data frame refers to a separate population sample
 #' @param outcome name of outcome variable (must be common across dataframes in dat_list)
 #' @param measures names of measures to be compared
-#' @param method whether to use parametric or bootstrap to determine covariance
-#' matrix of measures' correlation with outcome
-#' @param B number of bootstrap samples
 #'
 #' @return results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI
 #' @export
@@ -17,18 +14,14 @@
 #' \dontrun{a <- list(cor(datA), cor(datB))}
 #' \dontrun{perform_coranova(a, "V1", c("V2", "V3"), "parametric")}
 #'
-perform_coranova <- function(dat_list, outcome, measures, method, B){
+perform_coranova_parametric <- function(dat_list, outcome, measures){
   if(typeof(dat_list[[1]]) == "double"){
     dat_list <- list(dat_list)
   }
   cormat_list <- lapply(dat_list, cor)
   n_list <- lapply(dat_list, nrow)
   R <- populate_R(cormat_list, outcome, measures)
-  if(method == "parametric"){
-    V <- populate_V(cormat_list, outcome, measures, n_list)
-  }else if(method == "boot"){
-    V <- bootstrap_V(dat_list, B, length(dat_list), outcome, measures)
-  }
+  V <- populate_V(cormat_list, outcome, measures, n_list)
   g <- length(dat_list)
   m <- length(measures)
   p <- length(measures) + 1
@@ -84,7 +77,7 @@ perform_coranova <- function(dat_list, outcome, measures, method, B){
 #' @export
 #'
 #' @examples \dontrun{TO ADD}
-perform_coranova_perm <- function(dat_list, outcome, measures, B, n_perm, test){
+perform_coranova_nonparametric <- function(dat_list, outcome, measures, B, n_perm, test){
   perms <- c(rep(0, n_perm))
   nmeasures <- length(measures)
   method <- "bootstrap"
