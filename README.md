@@ -25,8 +25,26 @@ In simulations we find at least 1000 bootstrap and 1000 permutations are necessa
 
 To compare polygenic scores across multiple population samples, create a list of data frames where each data frame contains the data from a distinct population sample. Each data frame should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
 
+### Example
 
-## Example
+
+
+AFR:
+```
+  pheno       pgs1        pgs2        pgs3
+  -1.4606535  -1.1363873  0.7988800   0.05945586
+  -0.1498208  0.9218904   -1.8164597  -1.95811704
+  3.5076853   0.2239545   1.5862969   -0.12250429
+```
+
+EUR:
+```
+  pheno       pgs1        pgs2        pgs3
+  -3.249809   0.66336192  -2.470082   -0.5937651
+  -2.754595   -0.72927645 2.431823    -0.1291377
+  -1.698634   0.07946734  -1.129588   -0.9772898
+```
+
 
 
 ``` r
