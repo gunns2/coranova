@@ -4,7 +4,7 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-This package can be used to formally compare two ore more polygenic scores in one or more populations using correlation with outcome variable to compare the scores. 
+This package can be used to formally compare two or more polygenic scores in one or more populations using correlation with outcome variable to compare the scores. 
 Two implementations are available: parametric and non-parametric. We recommend the parametric implementation for continuous outcomes, and non-parametric for binary outcomes, or other non-normal traits. 
 
 ## Installation
