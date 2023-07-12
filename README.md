@@ -31,7 +31,6 @@ To compare polygenic scores across multiple population samples, create a list of
 
 ``` r
 library(coranova)
-library(MASS)
 
 head(afr)
 head(eur)
