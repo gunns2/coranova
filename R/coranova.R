@@ -8,11 +8,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)}
-#' \dontrun{datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))}
-#' \dontrun{datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))}
-#' \dontrun{a <- list(datA, datB)}
-#' \dontrun{perform_coranova(a, "V1", c("V2", "V3"), "parametric")}
+#' perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"))
 #'
 perform_coranova_parametric <- function(dat_list, outcome, measures){
   if(typeof(dat_list[[1]]) == "double"){
@@ -76,37 +72,38 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
 #' @return p-value of chosen test
 #' @export
 #'
-#' @examples \dontrun{TO ADD}
+#' @examples
+#'  perform_coranova_nonparametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"), 5, 5, "int")
+#'
 perform_coranova_nonparametric <- function(dat_list, outcome, measures, B, n_perm, test){
   perms <- c(rep(0, n_perm))
   nmeasures <- length(measures)
-  method <- "bootstrap"
-  print(nmeasures)
+  method <- "boot"
   if(test == "within"){
     stat <- "SW"
     for(i in 1:n_perm){
       #perform vars switching, within
-      dat_list1 <- lapply(dat_list, shuffled_df, measures = measures, nmeasures = nmeasures)
+      dat_list1 <- lapply(dat_list, shuffled_df, outcome = outcome, measures = measures, nmeasures = nmeasures)
       perms[i] <- coranova_perm_helper(dat_list1, outcome, measures, method, B, stat)
     }
   }else if(test == "between"){
-    test <- "SB"
+    stat <- "SB"
     for(i in 1:n_perm){
       #perform group switching, between
       dat_list1 <- shuffle_groups(dat_list)
       perms[i] <- coranova_perm_helper(dat_list1, outcome, measures, method, B, stat)
     }
   }else if(test == "int"){
-    test <- "SI"
+    stat <- "SI"
     for(i in 1:n_perm){
       #first, group switching
       dat_list1 <- shuffle_groups(dat_list)
       #first, var switching
-      dat_list2 <- lapply(dat_list1, shuffled_df, measures = measures, nmeasures = nmeasures)
-      perms[i] <- coranova_perm_helper(dat_list2, "V1", measures, method = method, B = B, stat = stat)
+      dat_list2 <- lapply(dat_list1, shuffled_df,  outcome = outcome, measures = measures, nmeasures = nmeasures)
+      perms[i] <- coranova_perm_helper(dat_list2, outcome, measures, method = method, B = B, stat = stat)
     }
   }
-  chistat <- coranova_perm_helper(dat_list, "V1", measures, method = method, B = B, stat = stat)
+  chistat <- coranova_perm_helper(dat_list, outcome, measures, method = method, B = B, stat = stat)
   return(mean(as.numeric(chistat) <  perms))
 }
 

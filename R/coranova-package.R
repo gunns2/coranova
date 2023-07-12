@@ -5,6 +5,7 @@
 #' @importFrom dplyr %>%
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr mutate
+#' @importFrom dplyr select
 #' @importFrom MASS mvrnorm
 #' @importFrom Matrix bdiag
 #' @importFrom purrr map

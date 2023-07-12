@@ -26,5 +26,6 @@ p-value of chosen test
 Perform Coranova with permutations
 }
 \examples{
-\dontrun{TO ADD}
+ perform_coranova_nonparametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"), 5, 5, "int")
+
 }

@@ -102,10 +102,11 @@ shuffle_vars <- function(row) {
   row[sample(length(row))]
 }
 
-shuffled_df <- function(dat, measures, nmeasures){
+shuffled_df <- function(dat, outcome, measures, nmeasures){
+  dat <- as.data.frame(dat)
   shuffled <- apply(dat[, names(dat) %in% c(measures)], 1, shuffle_vars)
-  dat1 <- cbind(dat$V1, as.data.frame(t(shuffled)))
-  colnames(dat1) <- paste0("V", 1:c(nmeasures +1))
+  dat1 <- cbind(dat[[outcome]], as.data.frame(t(shuffled)))
+  colnames(dat1) <- c(outcome, measures)
   return(dat1)
 }
 
@@ -113,6 +114,9 @@ shuffled_df <- function(dat, measures, nmeasures){
 #statistic instead of p value
 coranova_perm_helper <- function(dat_list,outcome, measures, method, B, stat){
   cormat_list <- lapply(dat_list, cor)
+  print(cormat_list)
+  print(outcome)
+  print(measures)
   n_list <- lapply(dat_list, nrow)
   R <- populate_R(cormat_list, outcome, measures)
   if(method == "parametric"){
