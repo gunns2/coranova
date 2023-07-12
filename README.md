@@ -5,7 +5,9 @@
 <!-- badges: end -->
 
 This package can be used to formally compare two or more polygenic scores in one or more populations using correlation with outcome variable to compare the scores. 
-Two implementations are available: parametric and non-parametric. We recommend the parametric implementation for continuous outcomes, and non-parametric for binary outcomes, or other non-normal traits. 
+Two implementations are available: parametric and non-parametric. We recommend the parametric implementation for continuous outcomes, and non-parametric for binary outcomes, or other non-normally distributed traits. 
+
+
 
 ## Installation
 
@@ -15,6 +17,14 @@ You can install the development version of coranova from [GitHub](https://github
 # install.packages("devtools")
 devtools::install_github("gunns2/coranova")
 ```
+## Guidelines
+
+In simulations we find at least 1000 bootstrap and 1000 permutations are necessary to control type 1 error with binary outcomes.
+
+### Data Preparation
+
+To compare polygenic scores across multiple population samples, create a list of data frames where each dataframe contains the data from a distinct population sample. Each dataframe should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
+
 
 ## Example
 
@@ -26,7 +36,7 @@ library(MASS)
 mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)
 datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))
 datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))
-perform_coranova_parametric(list(cor(datA), cor(datB)) , "V1", c("V2", "V3"), "parametric")
+perform_coranova_parametric(list(datA, datB)) , "V1", c("V2", "V3"), "parametric")
 ```
 
 ## References

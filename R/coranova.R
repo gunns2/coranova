@@ -11,7 +11,7 @@
 #' \dontrun{mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)}
 #' \dontrun{datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))}
 #' \dontrun{datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))}
-#' \dontrun{a <- list(cor(datA), cor(datB))}
+#' \dontrun{a <- list(datA, datB)}
 #' \dontrun{perform_coranova(a, "V1", c("V2", "V3"), "parametric")}
 #'
 perform_coranova_parametric <- function(dat_list, outcome, measures){
