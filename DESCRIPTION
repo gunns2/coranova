@@ -1,10 +1,10 @@
 Package: coranova
-Title: What the Package Does (One Line, Title Case)
+Title: Compare Correlated Correlations 
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Sophia", "Gunn", , "gunns2@bu.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-6451-050X"))
+Description: This package can be used to formally compare two or more polygenic scores in one or more populations using correlation with outcome variable to compare the scores. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

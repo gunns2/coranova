@@ -4,9 +4,9 @@
 \name{coranova-package}
 \alias{coranova}
 \alias{coranova-package}
-\title{coranova: What the Package Does (One Line, Title Case)}
+\title{coranova: Compare Correlated Correlations}
 \description{
-What the package does (one paragraph).
+This package can be used to formally compare two or more polygenic scores in one or more populations using correlation with outcome variable to compare the scores.
 }
 \seealso{
 Useful links:
@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Sophia Gunn \email{gunns2@bu.edu} (\href{https://orcid.org/0000-0001-6451-050X}{ORCID})
 
 }
 \keyword{internal}
