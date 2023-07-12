@@ -17,7 +17,6 @@ devtools::install_github("gunns2/coranova")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(coranova)
