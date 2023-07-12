@@ -51,7 +51,8 @@ To compare all three PGS across the two populations:
 perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"))
 ```
 
-To compare pgs1 and pgs2 in African population, will give confidence interval for difference in correlation between outcome and the two scores:
+To compare pgs1 and pgs2 in African population:
+This command will give confidence interval for difference in correlation between outcome and the two scores in the African sample.
 ``` r
 perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2"))
 ```
