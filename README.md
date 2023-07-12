@@ -16,6 +16,7 @@ You can install the development version of coranova from [GitHub](https://github
 ``` r
 # install.packages("devtools")
 devtools::install_github("gunns2/coranova")
+library(coranova)
 ```
 ## Guidelines
 
@@ -45,15 +46,13 @@ EUR:
   -1.698634   0.07946734  -1.129588   -0.9772898
 ```
 
-
-
+To compare all three PGS across the two populations:
 ``` r
-library(coranova)
-
-head(afr)
-head(eur)
 perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"))
+```
 
+To compare pgs1 and pgs2 in African population, will give confidence interval for difference in correlation between outcome and the two scores:
+``` r
 perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2"))
 ```
 
