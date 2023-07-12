@@ -23,7 +23,7 @@ In simulations we find at least 1000 bootstrap and 1000 permutations are necessa
 
 ### Data Preparation
 
-To compare polygenic scores across multiple population samples, create a list of data frames where each dataframe contains the data from a distinct population sample. Each dataframe should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
+To compare polygenic scores across multiple population samples, create a list of data frames where each data frame contains the data from a distinct population sample. Each data frame should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
 
 
 ## Example
@@ -33,10 +33,11 @@ To compare polygenic scores across multiple population samples, create a list of
 library(coranova)
 library(MASS)
 
-mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)
-datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))
-datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))
-perform_coranova_parametric(list(datA, datB)) , "V1", c("V2", "V3"), "parametric")
+head(afr)
+head(eur)
+perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"))
+
+perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2"))
 ```
 
 ## References
