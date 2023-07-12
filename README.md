@@ -7,6 +7,7 @@
 This package can be used to formally compare two or more polygenic scores in one or more populations using correlation with outcome variable to compare the scores. 
 Two implementations are available: parametric and non-parametric. We recommend the parametric implementation for continuous outcomes, and non-parametric for binary outcomes, or other non-normally distributed traits. 
 
+Paper forthcoming.
 
 
 ## Installation
@@ -20,7 +21,7 @@ library(coranova)
 ```
 ## Guidelines
 
-In simulations we find at least 1000 bootstrap and 1000 permutations are necessary to control type 1 error with binary outcomes.
+
 
 ### Data Preparation
 
@@ -56,6 +57,9 @@ This command will give confidence interval for difference in correlation between
 ``` r
 perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2"))
 ```
+## Warnings
+
+In simulations we find at least 1000 bootstrap and 1000 permutations are necessary to control type 1 error with binary outcomes. We have not tested other non-normal outcome distributions. 
 
 ## References
 Bilker WB, Brensinger C, Gur RC. A Two Factor ANOVA-like Test for Correlated Correlations: CORANOVA. Multivariate Behav Res. 2004 Oct 1;39(4):565-94. doi: 10.1207/s15327906mbr3904_1. PMID: 26745459.
