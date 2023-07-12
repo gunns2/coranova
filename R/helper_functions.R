@@ -1,3 +1,6 @@
+########
+### General Helper Functions
+#######
 
 #if two variables are the same must be listed first
 get_cov_from_cor_mat <- function(cor_mat, vars1, vars2, n){
@@ -25,21 +28,6 @@ generate_linear_contrasts <- function(n_groups, n_measures, type){
 }
 
 
-#' Populate Sample Correlation Vector
-#'
-#' @param cormat_list list of correlation matrices, one for each sample
-#' @param outcome name of outcome variable
-#' @param measures vector of names of measure variables
-#'
-#' @return vector of correlations with measures and outcome variable
-#' @export
-#'
-#' @examples
-#' \dontrun{mat <- matrix(c(1, 0.5, 0.6, 0.5, 1, 0.2, 0.6, 0.3, 1), ncol = 3)}
-#' \dontrun{datA <- as.data.frame(MASS::mvrnorm(n = 100,  rep(0, 3), mat))}
-#' \dontrun{datB <- as.data.frame(MASS:mvrnorm(n = 100,  rep(0, 3), mat))}
-#' \dontrun{a <- list(cor(datA), cor(datB))}
-#' \dontrun{populate_R(a, "V1", c("V2", "V3"))}
 populate_R <- function(cormat_list, outcome, measures){
   R <- lapply(cormat_list, getVals, outcome = outcome, measures = measures)
   return(unlist(R))
@@ -65,9 +53,12 @@ populate_V <- function(cormat_list, outcome, measures, n_list){
   return(bdiag(cov_list))
 }
 
-sample_dat <- function(dat){
-  return(dat[sample(nrow(dat), replace = TRUE),])
-}
+########
+### Helper Functions for non-Parametric Implementation
+#######
+
+
+### Bootstrapping Functions
 
 bootstrap_V <- function(dat_list, B, num_pops, outcome, measures){
   stopifnot(num_pops == length(dat_list))
@@ -91,7 +82,13 @@ bootstrap_V <- function(dat_list, B, num_pops, outcome, measures){
   return(round(cov(R_df), 5))
 }
 
-#permutation functions
+sample_dat <- function(dat){
+  return(dat[sample(nrow(dat), replace = TRUE),])
+}
+
+
+### Permutation Functions
+
 shuffle_groups <- function(dat_list){
   dat_df <- bind_rows(dat_list, .id = "dat")
   dat_df1 <- dat_df %>% mutate(dat = sample(dat_df$dat, length(dat_df$dat), replace = F))
