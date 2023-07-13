@@ -11,3 +11,22 @@ test_that("full coranova works", {
 #need to add more
 
 
+
+test_that("populate R works", {
+  expected_output <- c(0.2986534, 0.1390183, 0.1193595, 0.3355741, 0.1886227, 0.1582048 )
+  names(expected_output) <- c("pgs1", "pgs2", "pgs3", "pgs1", "pgs2", "pgs3")
+  expect_equal(populate_R(list(cor(afr), cor(eur)), "pheno", c("pgs1", "pgs2", "pgs3")),expected_output,tolerance=1e-7)
+})
+
+test_that("populate V one group works", {
+var1 <- (1 - 0.2986534^2)^2/5000
+var2 <- (1 - 0.139018264^2)^2/5000
+var3 <- (1 - 0.119359495^2)^2/5000
+
+cov12 <- (0.5*(2*0.1811254 - 0.2986534*0.139018264)*(1 - 0.1811254^2 - 0.2986534^2 - 0.139018264^2) + 0.1811254^3)/5000
+cov23 <- (0.5*(2*0.009823649 - 0.139018264*0.119359495)*(1 - 0.009823649^2 - 0.139018264^2 - 0.119359495^2) + 0.009823649^3)/5000
+cov13 <- (0.5*(2*0.1505211 - 0.2986534*0.119359495)*(1 - 0.1505211^2 - 0.2986534^2 - 0.119359495^2) + 0.1505211^3)/5000
+
+output <- matrix(c(var1, cov12, cov13, cov12, var2, cov23, cov13, cov23, var3), ncol = 3, byrow = T)
+expect_equal(populate_V_one_group(cor(afr), 5000, "pheno", c("pgs1","pgs2", "pgs3")), output,tolerance=1e-7 )
+})
