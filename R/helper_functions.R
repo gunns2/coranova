@@ -109,18 +109,14 @@ shuffled_df <- function(dat, outcome, measures, nmeasures){
 
 #coranova to be performed within permutation step to generate p-values, returns test
 #statistic instead of p value
-coranova_perm_helper <- function(dat_list,outcome, measures, method, B, stat){
+coranova_perm_helper <- function(dat_list,outcome, measures, B, stat){
   cormat_list <- lapply(dat_list, cor)
   print(cormat_list)
   print(outcome)
   print(measures)
   n_list <- lapply(dat_list, nrow)
   R <- populate_R(cormat_list, outcome, measures)
-  if(method == "parametric"){
-    V <- populate_V(cormat_list, outcome, measures, n_list)
-  }else if(method == "boot"){
-    V <- bootstrap_V(dat_list, B, length(dat_list), outcome, measures)
-  }
+  V <- bootstrap_V(dat_list, B, length(dat_list), outcome, measures)
   g <- length(dat_list)
   m <- length(measures)
   p <- length(measures) + 1

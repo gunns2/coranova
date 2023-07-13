@@ -5,7 +5,7 @@ Authors@R:
     person("Sophia", "Gunn", , "gunns2@bu.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6451-050X"))
 Description: This package can be used to formally compare two or more polygenic scores in one or more populations using correlation with outcome variable to compare the scores. 
-License: MIT + file LICENSE
+License: MIT 
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

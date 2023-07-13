@@ -78,20 +78,19 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
 perform_coranova_nonparametric <- function(dat_list, outcome, measures, B, n_perm, test){
   perms <- c(rep(0, n_perm))
   nmeasures <- length(measures)
-  method <- "boot"
   if(test == "within"){
     stat <- "SW"
     for(i in 1:n_perm){
       #perform vars switching, within
       dat_list1 <- lapply(dat_list, shuffled_df, outcome = outcome, measures = measures, nmeasures = nmeasures)
-      perms[i] <- coranova_perm_helper(dat_list1, outcome, measures, method, B, stat)
+      perms[i] <- coranova_perm_helper(dat_list1, outcome, measures, B, stat)
     }
   }else if(test == "between"){
     stat <- "SB"
     for(i in 1:n_perm){
       #perform group switching, between
       dat_list1 <- shuffle_groups(dat_list)
-      perms[i] <- coranova_perm_helper(dat_list1, outcome, measures, method, B, stat)
+      perms[i] <- coranova_perm_helper(dat_list1, outcome, measures, B, stat)
     }
   }else if(test == "int"){
     stat <- "SI"
@@ -100,10 +99,10 @@ perform_coranova_nonparametric <- function(dat_list, outcome, measures, B, n_per
       dat_list1 <- shuffle_groups(dat_list)
       #first, var switching
       dat_list2 <- lapply(dat_list1, shuffled_df,  outcome = outcome, measures = measures, nmeasures = nmeasures)
-      perms[i] <- coranova_perm_helper(dat_list2, outcome, measures, method = method, B = B, stat = stat)
+      perms[i] <- coranova_perm_helper(dat_list2, outcome, measures, B = B, stat = stat)
     }
   }
-  chistat <- coranova_perm_helper(dat_list, outcome, measures, method = method, B = B, stat = stat)
+  chistat <- coranova_perm_helper(dat_list, outcome, measures,  B = B, stat = stat)
   return(mean(as.numeric(chistat) <  perms))
 }
 

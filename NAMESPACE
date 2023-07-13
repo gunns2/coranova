@@ -2,7 +2,6 @@
 
 export(perform_coranova_nonparametric)
 export(perform_coranova_parametric)
-export(populate_R)
 importFrom(MASS,mvrnorm)
 importFrom(Matrix,bdiag)
 importFrom(dplyr,"%>%")
