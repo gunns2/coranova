@@ -8,6 +8,7 @@
 #' @importFrom dplyr select
 #' @importFrom MASS mvrnorm
 #' @importFrom Matrix bdiag
+#' @importFrom Matrix rankMatrix
 #' @importFrom purrr map
 #' @importFrom stats cor
 #' @importFrom stats cov

@@ -59,6 +59,44 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
   }
 }
 
+#' Perform User-Specified Hypothesis Test
+#'
+#' @param dat_list list of data frames, where each data frame refers to a separate population sample
+#' @param outcome name of outcome variable (must be common across dataframes in dat_list)
+#' @param measures names of measures to be compared
+#' @param contrast contrast matrix to generate hypothesis test
+#' @param method to request parametric or bootstrap implementation of covariance matrix V
+#' @param B number of bootstraps if method == "boot" is chosen
+#'
+#' @return results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI
+#' @export
+#'
+#' @examples
+#' TO DO
+perform_alt_test <- function (dat_list, outcome, measures, contrast, method, B)
+{
+  if (typeof(dat_list[[1]]) == "double") {
+    dat_list <- list(dat_list)
+  }
+  cormat_list <- lapply(dat_list, cor)
+  n_list <- lapply(dat_list, nrow)
+  R <- populate_R(cormat_list, outcome, measures)
+  if (method == "parametric") {
+    V <- populate_V(cormat_list, outcome, measures, n_list)
+  }
+  else if (method == "boot") {
+    V <- bootstrap_V(dat_list, B, length(dat_list), outcome,
+                     measures)
+  }
+
+  rank <- rankMatrix(contrast)
+  S <- t(contrast %*% R) %*% solve(contrast %*% V %*% t(contrast)) %*% (contrast %*% R)
+
+  p <- pchisq(as.numeric(S), rank, lower.tail = F)
+
+  return(list(S = S, P = p))
+
+}
 
 #' Perform Coranova with permutations
 #'
