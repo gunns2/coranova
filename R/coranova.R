@@ -27,7 +27,7 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
     pW <- pchisq(as.numeric(SW), p-2,  lower.tail = F)
     if(m == 2){#if only two scores, can return difference and se for difference
       diff <- t(CW%*%R)
-      se <- (1/solve(CW%*%V%*%t(CW)))^0.5
+      se <- (CW%*%V%*%t(CW))^0.5
       return(list(pW = pW, diff = diff, se =  se,  LCB = diff - 1.96*se, UCB = diff + 1.96*se))
     }else{#if more than two scores, just return pval
       return(list(pW = pW))
@@ -37,7 +37,7 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
     SB <- t(CB%*%R)%*%solve(CB%*%V%*%t(CB))%*%(CB%*%R)
     pB <- pchisq(as.numeric(SB), g-1,  lower.tail = F)
     if(g == 2){
-      se <- (1/solve(CB%*%V%*%t(CB)))^0.5
+      se <- (CB%*%V%*%t(CB))^0.5
       diff <- t(CB%*%R)
       return(list(pB = pB, diff = diff, se = se, LCB = diff - 1.96*se, UCB = diff + 1.96*se))
     }else{
