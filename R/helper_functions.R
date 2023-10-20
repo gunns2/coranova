@@ -79,7 +79,7 @@ bootstrap_V <- function(dat_list, B, num_pops, outcome, measures){
   }
   #step 4
   #Compute the covariance matrix R based on the B bootstrapped Rs, ˆ Boot V , which is a bootstrap estimate of V.
-  return(round(cov(R_df), 5))
+  return(cov(R_df))
 }
 
 sample_dat <- function(dat){
