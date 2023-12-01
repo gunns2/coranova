@@ -10,7 +10,7 @@ get_cov_from_cor_mat <- function(cor_mat, vars1, vars2, n){
 
 generate_linear_contrasts <- function(n_groups, n_measures, type){
   g <- n_groups
-  p <- n_measures + 1 #n measures + outcome variable
+  p <- n_measures + 1 #n measures + outcome variable to match Bilker et al
   if(type == "between"){
     C1 = kronecker(rep(1, g-1), t(rep(1, p -1 )))
     C2 = kronecker(diag(g-1), t(rep(-1,p-1)))
