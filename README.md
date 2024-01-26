@@ -21,15 +21,13 @@ library(coranova)
 ```
 ## Guidelines
 
-
-
 ### Data Preparation
 
 To compare polygenic scores across multiple population samples, create a list of data frames where each data frame contains the data from a distinct population sample. Each data frame should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
 
-### Example
+### Quick Start
 
-
+We can use this package to compare the performance of three polygenic scores in two populations. For full example, please see example1.Rmd. 
 
 AFR:
 ```
@@ -61,7 +59,11 @@ perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2"))
 
 Both PGS and outcome should be adjusted for principal components prior to analysis.
 
+Prior to running any comparisons, ensure that all correlations between polygenic scores and outcomes are positive. If they are not, the polygenic score was likely miscalculated. This can happen if the polygenic score was computed with the incorrect effect allele, which in that case it is a simple fix to multiple the polygenic score by -1. However, it is important to check that this is the problem and not a larger problem with the score. 
+
 In simulations we find at least 1000 bootstrap and 1000 permutations are necessary to control type 1 error with binary outcomes. We have not tested other non-normal outcome distributions. 
+
+
 
 ## References
 Bilker WB, Brensinger C, Gur RC. A Two Factor ANOVA-like Test for Correlated Correlations: CORANOVA. Multivariate Behav Res. 2004 Oct 1;39(4):565-94. doi: 10.1207/s15327906mbr3904_1. PMID: 26745459.
