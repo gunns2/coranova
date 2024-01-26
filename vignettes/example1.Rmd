@@ -3,8 +3,10 @@ title: "example1"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{example1}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -23,12 +25,12 @@ library(ggplot2)
 
 Say we are interested in comparing the performance of three polygenic scores in an African-ancestry and European-ancestry population, for example in the case of three polygenic scores generated with three different GWAS results: pgs1 from a multi-ancestry meta-analysis, pgs2 from a large European GWAS and pgs3 from a smaller-sized African GWAS. In this case, we are interested in answering a few questions:
 
-#####  Q1. Is there a difference in the performance of the three polygenic scores in both populations? \
-##### Q2. Is there a difference in the performance of the scores between the populations? \
-##### Q3. If the answer is yes to Q1, is there a superior score within each population? \
-##### Q4. If there is a superior score within each population, is it the same and does its performance vary between populations? \
+#####  Q1. Is the PGS developed from the multi-ancestry meta-analysis better than the PGS developed with ancestry-specific GWASs? 
+#####  Q1. Does the PGS developed from the multi-ancestry meta-analysis perform better in one population than the other?  
 
-In this example we will demonstrate how to use our method to address all of these questions with the coranova command $\texttt{perform_coranova_parametric}$ . 
+In this example we will demonstrate how to use our method to address these questions with the coranova command $\texttt{perform_coranova_parametric}$ . 
+
+With coranova, we are comparing the performance of each PGS alone to predict the outcome using the correlation between the outcome and each PGS as our key metric ($cor(Y, PGS_i)$). 
 
 ### Data Preparation:
 To use the coranova package, we need to have one dataframe per population sample where the rows are individuals in the population and the columns include the phenotype of interest, and the polygenic scores we wish to compare. 
@@ -42,94 +44,100 @@ head(afr, 3)
 head(eur, 3)
 ```
 
-The example data is already in the correct format, but if your data is not, THINK OF WHAT. TO DO
+Let's rename the polygenic score columns to match the GWAS with which they were built:
 ```{r}
-#colnames(afr) <- c("pheno", "pgs1", "pgs2", "pgs3")
-#colnames(eur) <- c("pheno", "pgs1", "pgs2", "pgs3")
+colnames(afr) <- c("pheno", "META", "EUR", "AFR")
+colnames(eur) <- c("pheno", "META", "EUR", "AFR")
 ```
 
 ### Visualizing Data
 
 To further understand these data, we can also plot the correlations between the three polygenic scores and phenotype within the two populations:
 
-```{r}
+```{r, fig.width = 6, fig.height = 4}
 library(ggplot2)
 
-cor_dat <- data.frame(pop = c(rep("AFR", 3), rep("EUR", 3)), cor = c(cor(afr)["pheno", c("pgs1", "pgs2", "pgs3")], cor(eur)["pheno", c("pgs1", "pgs2", "pgs3")]), score = rep(c("pgs1", "pgs2", "pgs3"), 2))
+cor_dat <- data.frame(pop = c(rep("AFR", 3), rep("EUR", 3)), 
+                      cor = c(cor(afr)["pheno", c("META", "EUR", "AFR")],
+                              cor(eur)["pheno", c("META", "EUR", "AFR")]), 
+                      score = rep(c("META", "EUR", "AFR"), 2))
 
-ggplot(cor_dat) + geom_bar(aes(x = score, y = cor), stat = "identity") + facet_wrap(~pop) + labs(x = "Polygenic Score", y = "Correlation with Outcome")
+ggplot(cor_dat) + 
+  geom_bar(aes(x = score, y = cor), stat = "identity") + 
+  facet_wrap(~pop) + 
+  labs(x = "Polygenic Score", y = "Correlation with Outcome")
 
 ```
 
-Now, just looking at this figure we can see that the first polygenic score has a much higher correlation with the phenotype in both populations than the other two polygenic scores. However, we want to support this observation with statistical rigor, which we can do using the coranova package! We can also see that the correlation of the first polygenic score with the phenotype is higher in the European population sample than the African population sample, however we don't know if this difference is statistically significant. We can use this package to determine that!
+Now, just looking at this figure we can see that the META polygenic score has a much higher correlation with the phenotype in both populations than the other two polygenic scores. However, we want to support this observation with statistical rigor, which we can do using the coranova package! We can also see that the correlation of the META polygenic score with the phenotype is higher in the European population sample than the African population sample, however we don't know if this difference is statistically significant. We can use this package to determine that!
 
 ### Using Coranova package
-To use the coranova package,  we need to wrap the two population sample dataframes in a list with `list(afr, eur)` and provide the column names of the outcome (here `pheno`) and the names of the polygenic scores we want to compare (here: `pgs1`, `pgs2`, and `pgs3`).
+To use the coranova package,  we need to wrap the two population sample dataframes in a list with `list(afr, eur)` and provide the column names of the outcome (here `pheno`) and the names of the polygenic scores we want to compare (here: `META`, `EUR`, and `AFR`).
 
 We will run the basic coranova command like this:
 ```{r, eval = F}
-perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"))
+perform_coranova_parametric(list(afr, eur), "pheno", c("META", "AFR", "EUR"))
 ```
 
 
-#### Questions 1 and 2: Comparing Scores across Populations
-To answer these questions, we can use the default coranova tests, implemented in the function "perform_coranova_parametric."
+#### Comparing Scores across Populations
 
+We first may want to establish whether a difference across the three scores within the populations exists, and whether we see a significant difference in score performance across the populations. We can use the basic coranova function \textt{perform_coranova_parametric} to do that.
 
-
+When we run this:
 ```{r}
-perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2", "pgs3"))
+perform_coranova_parametric(list(afr, eur), "pheno", c("META", "AFR", "EUR"))
 ```
 
-The first value `pB` is the p-value from the between test which evaluates whether the mean correlation of the three polygenic scores with the phenotype differs between the population groups `afr` and `eur`. Here the p-value is 0.0005, so we can conclude that the correlation of the scores do vary by population, answering our Q1. 
+The first value `pB` is the p-value from the between test which evaluates whether the mean correlation of the three polygenic scores with the phenotype differs between the population groups `afr` and `eur`. Here the p-value is 0.0005, so we can conclude that the correlation of the scores do vary by population.
 
-The second value `pW` is the p-value from the between test which evaluates whether the polygenic scores have the same correlation with the phenotype or not. Here the p-value is 9e-60,  so we can conclude that the scores do not perform the same, answering our Q2.
+The second value `pW` is the p-value from the between test which evaluates whether the polygenic scores have the same correlation with the phenotype or not. Here the p-value is 9e-60,  so we can conclude that the scores do not perform the same.
 
-#### Question 3: Comparing Scores Within Each Population
+#### Comparing Scores Within Each Population
 To compare the scores further within each population, we can use $\texttt{perform_coranova_parametric}$ with a single population, and the scores we want to compare.
 
 ##### If we want to compare the performance of the three polygenic scores within each population,  we can use the following commands:
 ```{r}
-perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2", "pgs3"))
-perform_coranova_parametric(list(eur), "pheno", c("pgs1", "pgs2", "pgs3"))
+perform_coranova_parametric(list(afr), "pheno", c("META", "AFR", "EUR"))
+perform_coranova_parametric(list(eur), "pheno", c("META", "AFR", "EUR"))
 ```
 
 However, since there are three polygenic scores, the test will just provide the within test p-value ($p_{within}$). If we want pairwise comparisons,  we can run the $\texttt{perform_coranova_parametric}$  with a single population and two polygenic scores. However, we recommend using adjusted p-value thresholds, due to the potentially high number of hypothesis tests when comparing pairwise. In this example, we have 2 population samples and three scores, so we will run 2*3 = 6 pairwise tests, thus we will use a p-value threshold of 0.05/6 = 0.0083. 
 
 ##### Comparing the pgs1 to the pgs2 to in each population sample:
 ```{r}
-perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs2"))
-perform_coranova_parametric(list(eur), "pheno", c("pgs1", "pgs2"))
+perform_coranova_parametric(list(afr), "pheno", c("META", "EUR"))
+perform_coranova_parametric(list(eur), "pheno", c("META", "EUR"))
 ```
 When we only include two polygenic scores, the function returns the difference between the two scores, the standard error of the difference, and its 95% confidence interval.
 
-We conclude that in both population samples, the first polygenic score has a higher correlation with the outcome than the second polygenic score. In the African population sample, the first polygenic score has 0.16 higher correlation with the outcome than the second polygenic score ($95\% \text{ CI:} (0.12, 0.19), p_{within} =  3.4e^{-20}$). In the European population sample, the first polygenic score has 0.15 higher correlation with the outcome than the second polygenic score ($95\% \text{ CI:} (0.1, 0.18), p_{within} =  3.0e^{-19}$). 
+We conclude that in both population samples, the META has a higher correlation with the outcome than the EUR polygenic score. In the African population sample, the META PGS has 0.16 higher correlation with the outcome than the EUR PGS ($95\% \text{ CI:} (0.12, 0.19), p_{within} =  3.4e^{-20}$). In the European population sample, the META PGS has 0.15 higher correlation with the outcome than the EUR PGS ($95\% \text{ CI:} (0.1, 0.18), p_{within} =  3.0e^{-19}$). 
 
-SIDENOTE: We can use the interaction test implemented in coranova to determine whether the difference in performance between pgs1 and pgs2 differs across the two populations:
+SIDENOTE: We can use the interaction test implemented in coranova to determine whether the difference in performance between the META PGS and EUR PGS differs across the two populations:
 ```{r}
-perform_coranova_parametric(list(afr, eur), "pheno", c("pgs1", "pgs2"))
+perform_coranova_parametric(list(afr, eur), "pheno", c("META", "EUR"))
 ```
 Here, $p_{interaction}$ is 0.59,and thus we conclude that the pattern of score performance does not differ across population samples.
 
-##### We can also compare the pgs1 to the pgs3 to in each population sample:
+##### We can also compare the META PGS to the AFR PGS to in each population sample:
 ```{r}
-perform_coranova_parametric(list(afr), "pheno", c("pgs1", "pgs3"))
-perform_coranova_parametric(list(eur), "pheno", c("pgs1", "pgs3"))
+perform_coranova_parametric(list(afr), "pheno", c("META", "AFR"))
+perform_coranova_parametric(list(eur), "pheno",  c("META", "AFR"))
 ```
-We conclude that in both population samples, the first polygenic score has a higher correlation with the outcome than the third polygenic score. 
+We conclude that in both population samples, the META PGS has a higher correlation with the outcome than the AFRP PGS. 
 
-##### Finally, we can compare the pgs2 to the pgs3 to in each population sample:
+##### Finally, we can also compare the EUR PGS to the AFR PGS to in each population sample:
 ```{r}
-perform_coranova_parametric(list(afr), "pheno", c("pgs2", "pgs3"))
-perform_coranova_parametric(list(eur), "pheno", c("pgs2", "pgs3"))
+perform_coranova_parametric(list(afr), "pheno", c("EUR", "AFR"))
+perform_coranova_parametric(list(eur), "pheno", c("EUR", "AFR"))
 ```
-Here we do not find a significant difference in performance between the second and third polygenic scores in either population ($p_{within}$ = 0.3 in the African sample, $p_{within}$ = 0.1 in the European sample).
+Here we do not find a significant difference in performance between the EUR and AFR PGS in either population ($p_{within}$ = 0.3 in the African sample, $p_{within}$ = 0.1 in the European sample).
 
-#### Question 4: Comparing PGS1 Across Populations
+#### Question 4: Comparing META PGS Across Populations
 
-Now that we have established that PGS1 performs best in each population,  we can compare its performance between populations using the "between" test. The function $\texttt{perform_coranova_parametric}$ will run this test automatically and provide the difference and 95% confidence interval if given two populations and a single polygenic score.
+Now that we have established that the META PGS performs best in each population,  we can compare its performance between populations using the "between" test. The function $\texttt{perform_coranova_parametric}$ will run this test automatically and provide the difference and 95% confidence interval if given two populations and a single polygenic score.
 ```{r}
-perform_coranova_parametric(list(eur, afr), "pheno", "pgs1")
+perform_coranova_parametric(list(eur, afr), "pheno", "META")
 ```
 When we run this test, we find that the score has a 0.036 higher correlation with the outcome in the European population sample than the African population sample (95% CI: (0.002, 0.072)), and conclude that this difference is significant ($p_{between} = 0.04$). 
 
@@ -137,7 +145,7 @@ When we run this test, we find that the score has a 0.036 higher correlation wit
 
 In this example, we have utilized the coranova package and its command $\texttt{perform_coranova_parametric}$ to compare three polygenic scores in two population samples. 
 
-We established that the scores' correlation with the outcome did substantially vary within and across populations (Q1 and Q2). We then considered the pairwise differences between the scores to determine than in both populations the first polygenic score has a statistically significantly higher correlation with the outcome than the other two scores. Finally, we found that the first polygenic score has a slightly higher  correlation with the outcome in the European population sample compared to the African population sample, and this difference is statistically significant.
+We established that the scores' correlation with the outcome did substantially vary within and across populations. We then considered the pairwise differences between the scores to determine than in both populations the META PGS has a statistically significantly higher correlation with the outcome than the other two ancestry-specific scores. Finally, we found that the META PGS has a slightly higher  correlation with the outcome in the European population sample compared to the African population sample, and this difference is statistically significant.
 
 In the second example, we will see how we can use another command in the coranova package $\texttt{perform_alt_test}$ to devise more complicated hypothesis tests! 
 
