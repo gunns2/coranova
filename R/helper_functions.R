@@ -28,6 +28,17 @@ generate_linear_contrasts <- function(n_groups, n_measures, type){
 }
 
 
+#' Populate R
+#'
+#' @param cormat_list list of correlation matrices of input data frames, where each data frame refers to a separate population sample
+#' @param outcome name of outcome variable (must be common across dataframes in dat_list)
+#' @param measures names of measures to be compared
+#'
+#' @return vector of correlations according to order of measures
+#' @export
+#'
+#' @examples
+#'  #TO DO
 populate_R <- function(cormat_list, outcome, measures){
   R <- lapply(cormat_list, getVals, outcome = outcome, measures = measures)
   return(unlist(R))
@@ -47,6 +58,18 @@ populate_V_one_group <- function(cor_mat, n, outcome, measures){
   return(V)
 }
 
+#' Populate Covariance Matrix of Correlation Values
+#'
+#' @param cormat_list list of correlation matrices of input data frames, where each data frame refers to a separate population sample
+#' @param outcome name of outcome variable (must be common across dataframes in dat_list)
+#' @param measures names of measures to be compared
+#' @param n_list list of sample sizes of input data frames
+#'
+#' @return covariance matrix of correlation values
+#' @export
+#'
+#' @examples
+#' #TODO
 populate_V <- function(cormat_list, outcome, measures, n_list){
   stopifnot(length(cormat_list) == length(n_list))
   cov_list <- mapply(populate_V_one_group, cormat_list, n_list, MoreArgs = list(outcome = outcome, measures = measures), SIMPLIFY = F)
