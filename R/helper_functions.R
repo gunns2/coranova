@@ -28,7 +28,7 @@ generate_linear_contrasts <- function(n_groups, n_measures, type){
 }
 
 
-#' Populate R
+#' Populate Mu
 #'
 #' @param cormat_list list of correlation matrices of input data frames, where each data frame refers to a separate population sample
 #' @param outcome name of outcome variable (must be common across dataframes in dat_list)
@@ -39,9 +39,9 @@ generate_linear_contrasts <- function(n_groups, n_measures, type){
 #'
 #' @examples
 #'  #TO DO
-populate_R <- function(cormat_list, outcome, measures){
-  R <- lapply(cormat_list, getVals, outcome = outcome, measures = measures)
-  return(unlist(R))
+populate_mu <- function(cormat_list, outcome, measures){
+  mu <- lapply(cormat_list, getVals, outcome = outcome, measures = measures)
+  return(unlist(mu))
 }
 
 getVals <- function(cormat, outcome, measures){
@@ -70,7 +70,7 @@ populate_V_one_group <- function(cor_mat, n, outcome, measures){
 #'
 #' @examples
 #' #TODO
-populate_V <- function(cormat_list, outcome, measures, n_list){
+populate_sigma <- function(cormat_list, outcome, measures, n_list){
   stopifnot(length(cormat_list) == length(n_list))
   cov_list <- mapply(populate_V_one_group, cormat_list, n_list, MoreArgs = list(outcome = outcome, measures = measures), SIMPLIFY = F)
   return(bdiag(cov_list))
@@ -83,7 +83,7 @@ populate_V <- function(cormat_list, outcome, measures, n_list){
 
 ### Bootstrapping Functions
 
-bootstrap_V <- function(dat_list, B, num_pops, outcome, measures){
+bootstrap_sigma <- function(dat_list, B, num_pops, outcome, measures){
   stopifnot(num_pops == length(dat_list))
   num_scores <- length(measures)
   #step 3 repeat steps 1 & 2
@@ -98,7 +98,7 @@ bootstrap_V <- function(dat_list, B, num_pops, outcome, measures){
     #step 2
     #Compute the correlations in the vector R based on the bootstrap sample.
     cormat_boot_list <- lapply(boot_list, cor)
-    R_df[b,]<- populate_R(cormat_boot_list, outcome, measures)
+    R_df[b,]<- populate_mu(cormat_boot_list, outcome, measures)
   }
   #step 4
   #Compute the covariance matrix R based on the B bootstrapped Rs, ˆ Boot V , which is a bootstrap estimate of V.
@@ -138,8 +138,8 @@ coranova_perm_helper <- function(dat_list,outcome, measures, B, stat){
   print(outcome)
   print(measures)
   n_list <- lapply(dat_list, nrow)
-  R <- populate_R(cormat_list, outcome, measures)
-  V <- bootstrap_V(dat_list, B, length(dat_list), outcome, measures)
+  R <- populate_mu(cormat_list, outcome, measures)
+  V <- bootstrap_sigma(dat_list, B, length(dat_list), outcome, measures)
   g <- length(dat_list)
   m <- length(measures)
   p <- length(measures) + 1

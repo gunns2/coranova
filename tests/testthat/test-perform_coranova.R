@@ -22,7 +22,7 @@ test_that("two pop, one pgs coranova works", {
 test_that("populate R works", {
   expected_output <- c(0.2986534, 0.1390183, 0.1193595, 0.3355741, 0.1886227, 0.1582048 )
   names(expected_output) <- c("pgs1", "pgs2", "pgs3", "pgs1", "pgs2", "pgs3")
-  expect_equal(populate_R(list(cor(afr), cor(eur)), "pheno", c("pgs1", "pgs2", "pgs3")),expected_output,tolerance=1e-7)
+  expect_equal(populate_mu(list(cor(afr), cor(eur)), "pheno", c("pgs1", "pgs2", "pgs3")),expected_output,tolerance=1e-7)
 })
 
 test_that("populate V one group works", {
@@ -40,5 +40,5 @@ expect_equal(populate_V_one_group(cor(afr), 5000, "pheno", c("pgs1","pgs2", "pgs
 
 test_that("populate V different sizes works", {
   output <- bdiag(populate_V_one_group(cor(eur), 5000, "pheno", c("pgs1","pgs2", "pgs3")), populate_V_one_group(cor(eur2000), 2000, "pheno", c("pgs1","pgs2", "pgs3")))
-  expect_equal(populate_V(list(cor(eur), cor(eur2000)), "pheno", c("pgs1","pgs2", "pgs3"), list(5000, 2000)), output,tolerance=1e-7 )
+  expect_equal(populate_sigma(list(cor(eur), cor(eur2000)), "pheno", c("pgs1","pgs2", "pgs3"), list(5000, 2000)), output,tolerance=1e-7 )
 })

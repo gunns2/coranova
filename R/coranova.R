@@ -16,8 +16,8 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
   }
   cormat_list <- lapply(dat_list, cor)
   n_list <- lapply(dat_list, nrow)
-  R <- populate_R(cormat_list, outcome, measures)
-  V <- populate_V(cormat_list, outcome, measures, n_list)
+  R <- populate_mu(cormat_list, outcome, measures)
+  V <- populate_sigma(cormat_list, outcome, measures, n_list)
   g <- length(dat_list)
   m <- length(measures)
   p <- length(measures) + 1
@@ -80,12 +80,12 @@ perform_alt_test <- function (dat_list, outcome, measures, contrast, method, B)
   }
   cormat_list <- lapply(dat_list, cor)
   n_list <- lapply(dat_list, nrow)
-  R <- populate_R(cormat_list, outcome, measures)
+  R <- populate_mu(cormat_list, outcome, measures)
   if (method == "parametric") {
-    V <- populate_V(cormat_list, outcome, measures, n_list)
+    V <- populate_sigma(cormat_list, outcome, measures, n_list)
   }
   else if (method == "boot") {
-    V <- bootstrap_V(dat_list, B, length(dat_list), outcome,
+    V <- bootstrap_sigma(dat_list, B, length(dat_list), outcome,
                      measures)
   }
 
@@ -118,8 +118,8 @@ perform_coranova_bootV <- function(dat_list, outcome, measures, B){
   }
   cormat_list <- lapply(dat_list, cor)
   n_list <- lapply(dat_list, nrow)
-  R <- populate_R(cormat_list, outcome, measures)
-  V <- bootstrap_V(dat_list, B, length(dat_list), outcome, measures)
+  R <- populate_mu(cormat_list, outcome, measures)
+  V <- bootstrap_sigma(dat_list, B, length(dat_list), outcome, measures)
   g <- length(dat_list)
   m <- length(measures)
   p <- length(measures) + 1
