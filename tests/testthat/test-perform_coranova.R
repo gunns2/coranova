@@ -22,7 +22,7 @@ test_that("two pop, one pgs coranova works", {
 test_that("populate R works", {
   expected_output <- c(0.2986534, 0.1390183, 0.1193595, 0.3355741, 0.1886227, 0.1582048 )
   names(expected_output) <- c("pgs1", "pgs2", "pgs3", "pgs1", "pgs2", "pgs3")
-  expect_equal(populate_mu(list(cor(afr), cor(eur)), "pheno", c("pgs1", "pgs2", "pgs3")),expected_output,tolerance=1e-7)
+  expect_equal(populate_u(list(cor(afr), cor(eur)), "pheno", c("pgs1", "pgs2", "pgs3")),expected_output,tolerance=1e-7)
 })
 
 test_that("populate V one group works", {

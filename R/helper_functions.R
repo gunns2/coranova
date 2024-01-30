@@ -39,7 +39,7 @@ generate_linear_contrasts <- function(n_groups, n_measures, type){
 #'
 #' @examples
 #'  #TO DO
-populate_mu <- function(cormat_list, outcome, measures){
+populate_u <- function(cormat_list, outcome, measures){
   mu <- lapply(cormat_list, getVals, outcome = outcome, measures = measures)
   return(unlist(mu))
 }
@@ -98,7 +98,7 @@ bootstrap_sigma <- function(dat_list, B, num_pops, outcome, measures){
     #step 2
     #Compute the correlations in the vector R based on the bootstrap sample.
     cormat_boot_list <- lapply(boot_list, cor)
-    R_df[b,]<- populate_mu(cormat_boot_list, outcome, measures)
+    R_df[b,]<- populate_u(cormat_boot_list, outcome, measures)
   }
   #step 4
   #Compute the covariance matrix R based on the B bootstrapped Rs, ˆ Boot V , which is a bootstrap estimate of V.
@@ -138,7 +138,7 @@ coranova_perm_helper <- function(dat_list,outcome, measures, B, stat){
   print(outcome)
   print(measures)
   n_list <- lapply(dat_list, nrow)
-  R <- populate_mu(cormat_list, outcome, measures)
+  R <- populate_u(cormat_list, outcome, measures)
   V <- bootstrap_sigma(dat_list, B, length(dat_list), outcome, measures)
   g <- length(dat_list)
   m <- length(measures)
