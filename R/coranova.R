@@ -1,8 +1,8 @@
 #' Perform Coranova
 #'
 #' @param dat_list list of data frames, where each data frame refers to a separate population sample
-#' @param outcome name of outcome variable (must be common across dataframes in dat_list)
-#' @param measures names of measures to be compared
+#' @param outcome name of column containing outcome variable (must be common across dataframes in dat_list)
+#' @param measures vector of column names of measures to be compared
 #'
 #' @return results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI
 #' @export
@@ -62,10 +62,10 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
 #' Perform User-Specified Hypothesis Test
 #'
 #' @param dat_list list of data frames, where each data frame refers to a separate population sample
-#' @param outcome name of outcome variable (must be common across dataframes in dat_list)
-#' @param measures names of measures to be compared
+#' @param outcome name of column containing outcome variable (must be common across dataframes in dat_list)
+#' @param measures vector of column names of measures to be compared
 #' @param contrast contrast matrix to generate hypothesis test
-#' @param method to request parametric or bootstrap implementation of covariance matrix V
+#' @param method to request parametric ("parametric") or bootstrap implementation ("boot") of covariance matrix V
 #' @param B number of bootstraps if method == "boot" is chosen
 #'
 #' @return results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI
@@ -101,8 +101,8 @@ perform_alt_test <- function (dat_list, outcome, measures, contrast, method, B)
 #' Perform Coranova with bootstrapped V
 #'
 #' @param dat_list list of data frames, where each data frame refers to a separate population sample
-#' @param outcome name of outcome variable
-#' @param measures vector of measures to be compared
+#' @param outcome name of column containing outcome variable (must be common across dataframes in dat_list)
+#' @param measures vector of column names of measures to be compared
 #' @param B number of bootstrap samples to run
 #'
 #' @return p-value of chosen test
@@ -165,8 +165,8 @@ perform_coranova_bootV <- function(dat_list, outcome, measures, B){
 #' Perform Coranova with permutations
 #'
 #' @param dat_list list of data frames, where each data frame refers to a separate population sample
-#' @param outcome name of outcome variable
-#' @param measures vector of measures to be compared
+#' @param outcome name of column containing outcome variable (must be common across dataframes in dat_list)
+#' @param measures vector of column names of measures to be compared
 #' @param B number of bootstrap samples to run
 #' @param n_perm number of permutations to run
 #' @param test type of test to be performed, options: "within", "between" or "int"

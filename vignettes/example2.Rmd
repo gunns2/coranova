@@ -1,0 +1,284 @@
+---
+title: "example2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{example2}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.height = 4, fig.width = 6
+  
+)
+```
+
+```{r setup}
+library(coranova)
+library(dplyr)
+library(ggplot2)
+library(Matrix)
+```
+
+In this example, we will demonstrate how to use the function $\texttt{perform_alt_test}$ to test additional hypotheses!
+
+
+### Some Theory to Set the Scene
+First, let's go through a little bit of the math that makes this method possible.
+
+The correlation between two random variables summarizes the strength of their linear relationship, a correlation close to 1 indicates that the two variables have a strong, positive correlation.
+
+In the case of polygenic scores, we would like a PGS to have a high correlation with its associated outcome and we can use correlation to compare PGS.
+
+To derive statistical tests of correlation measures, we can model correlation coefficients as normally distributed, as defined by Olkin & Finn (1990).
+
+Let $u$ be a row vector of sample correlations of $p$ PGS with outcome $Y$ in population $j$ and let $\mu$ denote the vector of population values. \
+
+$u = (r_{1, j}, r_{2,j}, ... r_{p,j})$\
+$\mu = (\rho_{1, j}, \rho_{2,j}, ... \rho_{p,j})$\
+
+We can model $\mu$ as normally distributed with covariance matrix $\hat{\Sigma}(\mu)$, as defined by Olkin & Finn (1990).
+
+$$\mu \sim N(\mu_0 , \hat{\Sigma}(\mu)) $$
+
+Then, we can test the null hypothesis,
+$$H_0: \mu A = \mu_0$$
+where $A$ is a $p$ x $M$ contrast matrix of rank $M$. Then, Then the test-statistic 
+$$ S = (u A - \mu_0) (A\hat{\Sigma}_\infty(u) A')^{-1}(u A - \mu_0)'$$
+will be $\chi^2$ distributed with degrees of freedom $M$ (the rank of contrast matrix $A$).
+
+For example: 
+
+Let $\mu_0 = 0 \text{ and } A^\intercal= \begin{bmatrix} 1 & -1 & 0 & ... & 0  \end{bmatrix}$
+
+Then, 
+$H_0: \rho_{1, j} = \rho_{2, j}$. 
+
+and the null hypothesis is that the first polygenic score has the same correlation with the outcome as the second polygenic score in population j.
+
+### Application to PGS
+
+Now let's apply this thinking to an example.
+
+In this example, we will consider 12 PGS prepared using four GWAS bases and three methods (so 4 x 3 total PGS) across two populations. 
+
+Let's take a peek at the data:
+```{r}
+head(pop1, 3)
+head(pop2, 3)
+```
+
+and look at correlation with the simulated outcome among the scores:
+```{r, fig.height=4, fig.width=6}
+cor_dat <- data.frame(pop = c(rep("pop1", 12), rep("pop2",12)),
+                      method = rep(c(rep("A", 4), rep("B", 4), rep("C", 4)), 2),
+                      cor = c(cor(pop1)["pheno", colnames(pop1)[-1]],
+                              cor(pop2)["pheno", colnames(pop2)[-1]]) ,
+                      gwas = rep(c("gwas1", "gwas2", "gwas3","gwas4"), 6))
+```
+
+In this example, we might be more concerned with comparing methods:
+
+```{r}
+cor_dat %>% mutate(score = paste(method, gwas, sep = "_")) %>%
+  ggplot() + geom_bar(aes(x = method, y = cor), stat = "identity") + 
+  facet_grid(gwas~pop) + 
+  labs(x = "Polygenic Score Method", y = "Correlation with Outcome")
+
+```
+
+or we might be more concerned with comparing GWAS bases:
+```{r}
+cor_dat %>% mutate(score = paste(method, gwas, sep = "_")) %>%
+  ggplot() + geom_bar(aes(x = gwas, y = cor), stat = "identity") + 
+  facet_grid(method~pop) + 
+  labs(x = "Polygenic Score Base GWAS", y = "Correlation with Outcome")
+```
+
+There are many questions we may want to investigate with these data!
+
+#### Let's start with the small case of comparing the performance of the three methods with gwas1 as the base. 
+```{r}
+cor_dat %>% mutate(score = paste(method, gwas, sep = "_")) %>%
+  filter(gwas == "gwas1") %>% 
+  ggplot() + geom_bar(aes(x = method, y = cor), stat = "identity") + 
+  facet_grid(~pop) + 
+  labs(x = "Polygenic Score Base GWAS", y = "Correlation with Outcome")
+```
+
+
+We can use the function \texttt{perform_alt_test}, to implement this type of hypothesis testing, we just need to specify the:\
+
+`dat_list`: list of data frames, where each data frame refers to a separate population sample
+
+`outcome`: name of outcome variable (must be common across dataframes in dat_list)
+
+`measures`: vector of the names of the columns of the measures to be compared
+
+`contrast`: contrast matrix to generate hypothesis test
+
+`method`: to request parametric ("parametric") or bootstrap implementation ("boot") of covariance matrix V
+
+`B`: number of bootstraps if method == "boot" is chosen
+
+In this example, we'll demonstrate how we can define a contrast matrix to determine whether there is a difference in score performance by methods. We will consider only pop1 at first, then show how we can extend this contrast matrix to two populations. 
+
+
+First, let's define the key variables that the function needs:
+```{r}
+dat_list <- list(pop1)
+outcome <- "pheno"
+measures <- c("gwas1_methodA", "gwas1_methodB",  "gwas1_methodC")
+method <- "parametric" 
+```
+
+Now, we need to define a contrast matrix to define our null hypothesis to be tested. 
+
+Because we have only specified "gwas1_methodA", "gwas1_methodB", and "gwas1_methodC" as our measures, and are only considering pop1, our vector u is:
+
+$$u = (r_{\text{gwas1_methodA, pop1}}, r_{\text{gwas1_methodB, pop1}}, r_{\text{gwas1_methodC, pop1}})$$
+
+if we are interested in comparing the three methods built with the first gwas,
+we can define a contrast matrix like so
+
+ $$A = \begin{bmatrix} 1 & -1 & 0 \\
+1 & 0 & -1  \end{bmatrix}$$
+```{r}
+contrast <- matrix(c(1, -1, 0,
+                     1, 0, -1), nrow = 2, ncol = 3, byrow = T)
+```
+
+
+when we matrix multiply our contrast matrix by our vector of correlations ($u$),
+
+$$u A = \begin{bmatrix} r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}\\
+r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}} \end{bmatrix} $$
+
+we can see that our null hypothesis is:
+
+$$u A = \begin{bmatrix} r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}\\
+r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}} \end{bmatrix}  = \begin{bmatrix} 0\\
+0 \end{bmatrix} $$
+
+and our alternative hypothesis is that at least one of the pairwise differences (either $r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}$ or $r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}}$) is not equal to 0 . 
+
+we can test this null  hypothesis and generate our test-statistic and p-value using the \texttt{perform_alt_test} function.
+```{r}
+perform_alt_test(list(pop1), outcome, measures, contrast, "parametric")
+```
+
+And finally, we conclude that at least one of the pairwise differences (either $r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}$ or $r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}}$) is not equal to 0 ($p = 8e^{-11}$), indicating that there is a difference in the scores generated with the different methods built with gwas1. 
+
+##### To understand how we got to this contrast matrix, let's explain what's going on under the hood of the function.
+
+First, we can generate some of the objects used within the function:
+```{r}
+cormat_list <- lapply(dat_list, cor) #list of correlation matrices, one per 
+                                     #population sample, here we have just 1 pop, 
+                                     # so list of size 1
+n_list <- lapply(dat_list, nrow) #list of sample sizes, again only 1 pop so, 
+                                 # so list of size 1
+```
+
+To look at the correlation matrix for the polygenic scores we are considering in this example, we can subset like so:
+```{r}
+cormat_list[[1]][c(outcome, measures), c(outcome, measures)]
+```
+
+Now, let's populate the vector of correlations and their covariance matrix for our test statistic.
+```{r}
+u <- populate_u(cormat_list, outcome, measures) #u is our vector of the correlations between the polygenic scores (specified in the measures vector) and the outcome
+u
+V <- populate_sigma(cormat_list, outcome, measures, n_list) #V is the covariance matrix of R, we need this to derive our test statistic!
+V
+```
+
+
+```{r}
+#we can see that the first term is equal to the correlation of the pgs derived with method A and the outcome (R[1])
+# minus the the correlation of the pgs derived with method A and the outcome (R[2])
+#and the second term is equal to the correlation of the pgs derived with method A and the outcome (R[1])
+# minus the the correlation of the pgs derived with method A and the outcome (R[3])
+contrast %*% u
+unname(u[1] - u[2])
+unname(u[1] - u[3])
+```
+
+Within the function, the test statistic is derived as follows:
+```{r}
+S <- t(contrast %*% u) %*% solve(contrast %*% V %*% t(contrast)) %*% (contrast %*% u)
+
+
+p <- pchisq(as.numeric(S), rankMatrix(contrast), lower.tail = F)
+```
+
+and this p-value is the probability that our test statistic is at least as extreme as our observed results given the null hypothesis.
+```{r}
+S
+p
+```
+
+which is exactly the same as the results of \texttt{perform_alt_test}.
+```{r}
+perform_alt_test(list(pop1), outcome, measures, contrast, "parametric")
+```
+
+#### That was a lot! But now that we know what we're working with extending to two populations will be no problem!
+
+To compare the methods across gwas 1 in both populations,
+
+let $$u = (r_{\text{gwas1_methodA, pop1}}, r_{\text{gwas1_methodB, pop1}}, r_{\text{gwas1_methodC, pop1}}, \\r_{\text{gwas1_methodA, pop2}}, r_{\text{gwas1_methodB, pop2}}, r_{\text{gwas1_methodC, pop2}})$$
+
+we can devise a contrast matrix like so:
+
+ $$A = \begin{bmatrix} 1 & -1 & 0 &  1 & -1 & 0 \\
+1 & 0 & -1 & 1 & 0 & -1  \end{bmatrix}$$
+
+Then, our null hypothesis is:
+
+$$u A = \begin{bmatrix} (r_{\text{gwas1_methodA, pop1}} + r_{\text{gwas1_methodA, pop2}}) -  (r_{\text{gwas1_methodB, pop1}} + r_{\text{gwas1_methodB, pop2}})\\
+(r_{\text{gwas1_methodA, pop1}} + r_{\text{gwas1_methodA, pop2}}) -  (r_{\text{gwas1_methodC, pop1}} + r_{\text{gwas1_methodC, pop2}})\end{bmatrix}  = \begin{bmatrix} 0\\
+0 \end{bmatrix} $$
+
+Essentially here we are averaging across the populations!
+
+Now that we know what we're doing, implementing this is a lot easier. All we need to do is provide the contrast matrix and plug it in to the $\texttt{perform_alt_test}$ function. Just make sure you have input the correct population/s, outcome and measures variables!
+```{r}
+contrast <- matrix(c(1, -1, 0, 1, -1, 0,
+                     1, 0, -1, 1, 0, -1), nrow = 2, ncol = 6, byrow = T)
+
+perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
+```
+
+#### Following the same logic, if we want to average across another gwas, all we need to do is change the "measures" option:
+
+Here we compare across the scores built with gwas2:
+```{r}
+contrast <- matrix(c(1, -1, 0, 1, -1, 0,
+                     1, 0, -1, 1, 0, -1), nrow = 2, ncol = 6, byrow = T)
+
+measures <- c("gwas2_methodA", "gwas2_methodB",  "gwas2_methodC")
+perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
+```
+
+We can also fully average across all the gwas options and the populations:
+$$u A = \begin{bmatrix} \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (  r_{\text{gwas}_i\text{_methodB, pop1}} + r_{\text{gwas}_i\text{_methodB, pop2}})\\
+\sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (r_{\text{gwas}_i\text{_methodC, pop1}} + r_{\text{gwas}_i\text{_methodC, pop2}})\end{bmatrix}  = \begin{bmatrix} 0\\
+0 \end{bmatrix} $$
+```{r}
+measures <- c("gwas1_methodA", "gwas1_methodB",  "gwas1_methodC",
+              "gwas2_methodA", "gwas2_methodB",  "gwas2_methodC",
+              "gwas3_methodA", "gwas3_methodB",  "gwas3_methodC",
+              "gwas4_methodA", "gwas4_methodB",  "gwas4_methodC")
+
+contrast <- matrix( c(rep(c(1, -1, 0, 1, -1, 0),4),
+                     rep(c(1, 0, -1, 1, 0, -1), 4)), nrow = 2, ncol = 24, byrow = T)
+
+perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
+```
+

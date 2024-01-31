@@ -134,9 +134,9 @@ shuffled_df <- function(dat, outcome, measures, nmeasures){
 #statistic instead of p value
 coranova_perm_helper <- function(dat_list,outcome, measures, B, stat){
   cormat_list <- lapply(dat_list, cor)
-  print(cormat_list)
-  print(outcome)
-  print(measures)
+  #print(cormat_list)
+  #print(outcome)
+  #print(measures)
   n_list <- lapply(dat_list, nrow)
   R <- populate_u(cormat_list, outcome, measures)
   V <- bootstrap_sigma(dat_list, B, length(dat_list), outcome, measures)

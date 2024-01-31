@@ -26,7 +26,7 @@ library(ggplot2)
 Say we are interested in comparing the performance of three polygenic scores in an African-ancestry and European-ancestry population, for example in the case of three polygenic scores generated with three different GWAS results: pgs1 from a multi-ancestry meta-analysis, pgs2 from a large European GWAS and pgs3 from a smaller-sized African GWAS. In this case, we are interested in answering a few questions:
 
 #####  Q1. Is the PGS developed from the multi-ancestry meta-analysis better than the PGS developed with ancestry-specific GWASs? 
-#####  Q1. Does the PGS developed from the multi-ancestry meta-analysis perform better in one population than the other?  
+#####  Q2. Does the PGS developed from the multi-ancestry meta-analysis perform better in one population than the other?  
 
 In this example we will demonstrate how to use our method to address these questions with the coranova command $\texttt{perform_coranova_parametric}$ . 
 
@@ -93,6 +93,8 @@ The first value `pB` is the p-value from the between test which evaluates whethe
 
 The second value `pW` is the p-value from the between test which evaluates whether the polygenic scores have the same correlation with the phenotype or not. Here the p-value is 9e-60,  so we can conclude that the scores do not perform the same.
 
+The third value `pI` is the p-value from the interaction test which evaluates whether there is a difference in the pattern of score performance across the two groups. Here the p-value is 0.86 so we fail to reject the null hypothesis, we can also confirm this visually by noting that in both the `afr` and `eur` population samples, the best performing score is the `META` pgs, followed by the `EUR` pgs, followed by the `AFR` pgs.
+
 #### Comparing Scores Within Each Population
 To compare the scores further within each population, we can use $\texttt{perform_coranova_parametric}$ with a single population, and the scores we want to compare.
 
@@ -135,7 +137,7 @@ Here we do not find a significant difference in performance between the EUR and 
 
 #### Question 4: Comparing META PGS Across Populations
 
-Now that we have established that the META PGS performs best in each population,  we can compare its performance between populations using the "between" test. The function $\texttt{perform_coranova_parametric}$ will run this test automatically and provide the difference and 95% confidence interval if given two populations and a single polygenic score.
+Now that we have established that the META PGS performs best in each population,  we can compare its performance between populations using the "between" test. If given two populations and a single polygenic score, the function $\texttt{perform_coranova_parametric}$ will run this test automatically and provide the difference and 95% confidence interval.
 ```{r}
 perform_coranova_parametric(list(eur, afr), "pheno", "META")
 ```
@@ -145,7 +147,7 @@ When we run this test, we find that the score has a 0.036 higher correlation wit
 
 In this example, we have utilized the coranova package and its command $\texttt{perform_coranova_parametric}$ to compare three polygenic scores in two population samples. 
 
-We established that the scores' correlation with the outcome did substantially vary within and across populations. We then considered the pairwise differences between the scores to determine than in both populations the META PGS has a statistically significantly higher correlation with the outcome than the other two ancestry-specific scores. Finally, we found that the META PGS has a slightly higher  correlation with the outcome in the European population sample compared to the African population sample, and this difference is statistically significant.
+We established that the scores' correlation with the outcome did substantially vary within and across populations. We then considered the pairwise differences between the scores to determine than in both populations the `META` PGS has a statistically significantly higher correlation with the outcome than the other two ancestry-specific scores. Finally, we found that the `META` PGS has a slightly higher  correlation with the outcome in the European population sample compared to the African population sample, and this difference is statistically significant.
 
 In the second example, we will see how we can use another command in the coranova package $\texttt{perform_alt_test}$ to devise more complicated hypothesis tests! 
 
