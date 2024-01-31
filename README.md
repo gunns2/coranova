@@ -16,16 +16,20 @@ You can install the development version of coranova from [GitHub](https://github
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("gunns2/coranova")
+devtools::install_github("gunns2/coranova",  build_vignettes = TRUE)
 library(coranova)
 ```
-## Guidelines
+
+Once installed, you can access detailed examples of how to use the package in our two vignettes with
+```r
+browseVignettes("coranova")
+```
+
+### Quick Start
 
 ### Data Preparation
 
 To compare polygenic scores across multiple population samples, create a list of data frames where each data frame contains the data from a distinct population sample. Each data frame should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
-
-### Quick Start
 
 We can use this package to compare the performance of three polygenic scores in two populations. For full example, please see example1.Rmd. 
 
