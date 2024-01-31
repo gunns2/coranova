@@ -27,7 +27,7 @@ browseVignettes("coranova")
 
 ### Quick Start
 
-### Data Preparation
+#### Data Preparation
 
 To compare polygenic scores across multiple population samples, create a list of data frames where each data frame contains the data from a distinct population sample. Each data frame should contain a column with the outcome variable and computed polygenic scores to be compared. The names of the columns should be shared across population sample data frames.
 
