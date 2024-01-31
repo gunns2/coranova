@@ -51,3 +51,5 @@ rsconnect/
 # pdf files
 *.pdf
 inst/doc
+/doc/
+/Meta/
