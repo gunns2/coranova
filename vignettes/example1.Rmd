@@ -91,7 +91,7 @@ perform_coranova_parametric(list(afr, eur), "pheno", c("META", "AFR", "EUR"))
 
 The first value `pB` is the p-value from the between test which evaluates whether the mean correlation of the three polygenic scores with the phenotype differs between the population groups `afr` and `eur`. Here the p-value is 0.0005, so we can conclude that the correlation of the scores do vary by population.
 
-The second value `pW` is the p-value from the between test which evaluates whether the polygenic scores have the same correlation with the phenotype or not. Here the p-value is 9e-60,  so we can conclude that the scores do not perform the same.
+The second value `pW` is the p-value from the within test which evaluates whether the polygenic scores have the same correlation with the phenotype or not within the groups. Here the p-value is 9e-60,  so we can conclude that the scores do not perform the same in the two population samples.
 
 The third value `pI` is the p-value from the interaction test which evaluates whether there is a difference in the pattern of score performance across the two groups. Here the p-value is 0.86 so we fail to reject the null hypothesis, we can also confirm this visually by noting that in both the `afr` and `eur` population samples, the best performing score is the `META` pgs, followed by the `EUR` pgs, followed by the `AFR` pgs.
 

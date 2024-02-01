@@ -25,7 +25,7 @@ library(ggplot2)
 library(Matrix)
 ```
 
-In this example, we will demonstrate how to use the function $\texttt{perform_alt_test}$ to test additional hypotheses!
+In this example, we will demonstrate how to use the function $\texttt{perform_alt_test}$ to define and test additional hypotheses!
 
 
 ### Some Theory to Set the Scene
@@ -112,7 +112,7 @@ cor_dat %>% mutate(score = paste(method, gwas, sep = "_")) %>%
 ```
 
 
-We can use the function \texttt{perform_alt_test}, to implement this type of hypothesis testing, we just need to specify the:\
+We can use the function $\texttt{perform_alt_test}$, to implement this type of hypothesis testing, we just need to specify the:\
 
 `dat_list`: list of data frames, where each data frame refers to a separate population sample
 
