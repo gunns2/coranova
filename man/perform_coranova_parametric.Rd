@@ -9,9 +9,9 @@ perform_coranova_parametric(dat_list, outcome, measures)
 \arguments{
 \item{dat_list}{list of data frames, where each data frame refers to a separate population sample}
 
-\item{outcome}{name of outcome variable (must be common across dataframes in dat_list)}
+\item{outcome}{name of column containing outcome variable (must be common across dataframes in dat_list)}
 
-\item{measures}{names of measures to be compared}
+\item{measures}{vector of column names of measures to be compared}
 }
 \value{
 results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI

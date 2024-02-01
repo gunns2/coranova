@@ -9,9 +9,9 @@ perform_coranova_bootV(dat_list, outcome, measures, B)
 \arguments{
 \item{dat_list}{list of data frames, where each data frame refers to a separate population sample}
 
-\item{outcome}{name of outcome variable}
+\item{outcome}{name of column containing outcome variable (must be common across dataframes in dat_list)}
 
-\item{measures}{vector of measures to be compared}
+\item{measures}{vector of column names of measures to be compared}
 
 \item{B}{number of bootstrap samples to run}
 }

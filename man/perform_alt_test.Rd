@@ -9,13 +9,13 @@ perform_alt_test(dat_list, outcome, measures, contrast, method, B)
 \arguments{
 \item{dat_list}{list of data frames, where each data frame refers to a separate population sample}
 
-\item{outcome}{name of outcome variable (must be common across dataframes in dat_list)}
+\item{outcome}{name of column containing outcome variable (must be common across dataframes in dat_list)}
 
-\item{measures}{names of measures to be compared}
+\item{measures}{vector of column names of measures to be compared}
 
 \item{contrast}{contrast matrix to generate hypothesis test}
 
-\item{method}{to request parametric or bootstrap implementation of covariance matrix V}
+\item{method}{to request parametric ("parametric") or bootstrap implementation ("boot") of covariance matrix V}
 
 \item{B}{number of bootstraps if method == "boot" is chosen}
 }
