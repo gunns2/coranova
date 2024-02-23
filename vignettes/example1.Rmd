@@ -82,7 +82,7 @@ perform_coranova_parametric(list(afr, eur), "pheno", c("META", "AFR", "EUR"))
 
 #### Comparing Scores across Populations
 
-We first may want to establish whether a difference across the three scores within the populations exists, and whether we see a significant difference in score performance across the populations. We can use the basic coranova function \textt{perform_coranova_parametric} to do that.
+We first may want to establish whether a difference across the three scores within the populations exists, and whether we see a significant difference in score performance across the populations. We can use the basic coranova function $\texttt{perform_coranova_parametric}$ to do that.
 
 When we run this:
 ```{r}
