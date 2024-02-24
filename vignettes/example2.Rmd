@@ -48,8 +48,8 @@ $$\mu \sim N(\mu_0 , \hat{\Sigma}(\mu)) $$
 
 Then, we can test the null hypothesis,
 $$H_0: \mu A = \mu_0$$
-where $A$ is a $p$ x $M$ contrast matrix of rank $M$. Then, Then the test-statistic 
-$$ S = (u A - \mu_0) (A\hat{\Sigma}_\infty(u) A')^{-1}(u A - \mu_0)'$$
+where $A$ is a $M$ x $p$ contrast matrix of rank $M$. Then, Then the test-statistic 
+$$S = (Au - \mu_0)' (A\hat{\Sigma}_\infty(u) A')^{-1}(Au - \mu_0)$$
 will be $\chi^2$ distributed with degrees of freedom $M$ (the rank of contrast matrix $A$).
 
 For example: 
