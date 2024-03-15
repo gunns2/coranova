@@ -47,7 +47,7 @@ We can model $\mu$ as normally distributed with covariance matrix $\hat{\Sigma}(
 $$\mu \sim N(\mu_0 , \hat{\Sigma}(\mu)) $$
 
 Then, we can test the null hypothesis,
-$$H_0: \mu A = \mu_0$$
+$$H_0: A \mu = \mu_0$$
 where $A$ is a $M$ x $p$ contrast matrix of rank $M$. Then, Then the test-statistic 
 $$S = (Au - \mu_0)' (A\hat{\Sigma}_\infty(u) A')^{-1}(Au - \mu_0)$$
 will be $\chi^2$ distributed with degrees of freedom $M$ (the rank of contrast matrix $A$).
@@ -156,12 +156,12 @@ contrast <- matrix(c(1, -1, 0,
 
 when we matrix multiply our contrast matrix by our vector of correlations ($u$),
 
-$$u A = \begin{bmatrix} r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}\\
+$$A u = \begin{bmatrix} r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}\\
 r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}} \end{bmatrix} $$
 
 we can see that our null hypothesis is:
 
-$$u A = \begin{bmatrix} r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}\\
+$$A u = \begin{bmatrix} r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}\\
 r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}} \end{bmatrix}  = \begin{bmatrix} 0\\
 0 \end{bmatrix} $$
 
@@ -241,7 +241,7 @@ we can devise a contrast matrix like so:
 
 Then, our null hypothesis is:
 
-$$u A = \begin{bmatrix} (r_{\text{gwas1_methodA, pop1}} + r_{\text{gwas1_methodA, pop2}}) -  (r_{\text{gwas1_methodB, pop1}} + r_{\text{gwas1_methodB, pop2}})\\
+$$A u = \begin{bmatrix} (r_{\text{gwas1_methodA, pop1}} + r_{\text{gwas1_methodA, pop2}}) -  (r_{\text{gwas1_methodB, pop1}} + r_{\text{gwas1_methodB, pop2}})\\
 (r_{\text{gwas1_methodA, pop1}} + r_{\text{gwas1_methodA, pop2}}) -  (r_{\text{gwas1_methodC, pop1}} + r_{\text{gwas1_methodC, pop2}})\end{bmatrix}  = \begin{bmatrix} 0\\
 0 \end{bmatrix} $$
 
@@ -267,7 +267,7 @@ perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
 ```
 
 We can also fully average across all the gwas options and the populations:
-$$u A = \begin{bmatrix} \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (  r_{\text{gwas}_i\text{_methodB, pop1}} + r_{\text{gwas}_i\text{_methodB, pop2}})\\
+$A u = \begin{bmatrix} \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (  r_{\text{gwas}_i\text{_methodB, pop1}} + r_{\text{gwas}_i\text{_methodB, pop2}})\\
 \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (r_{\text{gwas}_i\text{_methodC, pop1}} + r_{\text{gwas}_i\text{_methodC, pop2}})\end{bmatrix}  = \begin{bmatrix} 0\\
 0 \end{bmatrix} $$
 ```{r}
