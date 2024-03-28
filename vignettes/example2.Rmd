@@ -267,7 +267,7 @@ perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
 ```
 
 We can also fully average across all the gwas options and the populations:
-$A u = \begin{bmatrix} \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (  r_{\text{gwas}_i\text{_methodB, pop1}} + r_{\text{gwas}_i\text{_methodB, pop2}})\\
+$$A u = \begin{bmatrix} \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (  r_{\text{gwas}_i\text{_methodB, pop1}} + r_{\text{gwas}_i\text{_methodB, pop2}})\\
 \sum_{i = 1}^4 (r_{\text{gwas}_i\text{_methodA, pop1}} + r_{\text{gwas}_i\text{_methodA, pop2}}) -  (r_{\text{gwas}_i\text{_methodC, pop1}} + r_{\text{gwas}_i\text{_methodC, pop2}})\end{bmatrix}  = \begin{bmatrix} 0\\
 0 \end{bmatrix} $$
 ```{r}
