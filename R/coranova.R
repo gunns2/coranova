@@ -66,6 +66,7 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
 #' @param measures vector of column names of measures to be compared
 #' @param contrast contrast matrix to generate hypothesis test
 #' @param method to request parametric ("parametric") or bootstrap implementation ("boot") of covariance matrix V
+#' @param print TRUE or FALSE to request print statements
 #' @param B number of bootstraps if method == "boot" is chosen
 #'
 #' @return results of coranova test, when group == 1 only performs within test, when nscores = 2 provides CI
@@ -73,7 +74,7 @@ perform_coranova_parametric <- function(dat_list, outcome, measures){
 #'
 #' @examples
 #' #TO DO
-perform_alt_test <- function (dat_list, outcome, measures, contrast, method, B)
+perform_alt_test <- function (dat_list, outcome, measures, contrast, method, print, B)
 {
   if (typeof(dat_list[[1]]) == "double") {
     dat_list <- list(dat_list)
@@ -88,7 +89,10 @@ perform_alt_test <- function (dat_list, outcome, measures, contrast, method, B)
     V <- bootstrap_sigma(dat_list, B, length(dat_list), outcome,
                      measures)
   }
-
+  if(print == TRUE){
+    print(R)
+    print(contrast %*% R)
+  }
   rank <- rankMatrix(contrast)
   S <- t(contrast %*% R) %*% solve(contrast %*% V %*% t(contrast)) %*% (contrast %*% R)
 

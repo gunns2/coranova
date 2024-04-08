@@ -169,7 +169,7 @@ and our alternative hypothesis is that at least one of the pairwise differences 
 
 we can test this null  hypothesis and generate our test-statistic and p-value using the \texttt{perform_alt_test} function.
 ```{r}
-perform_alt_test(list(pop1), outcome, measures, contrast, "parametric")
+perform_alt_test(list(pop1), outcome, measures, contrast, "parametric", FALSE)
 ```
 
 And finally, we conclude that at least one of the pairwise differences (either $r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodB, pop1}}$ or $r_{\text{gwas1_methodA, pop1}} -  r_{\text{gwas1_methodC, pop1}}$) is not equal to 0 ($p = 8e^{-11}$), indicating that there is a difference in the scores generated with the different methods built with gwas1. 
@@ -225,7 +225,7 @@ p
 
 which is exactly the same as the results of \texttt{perform_alt_test}.
 ```{r}
-perform_alt_test(list(pop1), outcome, measures, contrast, "parametric")
+perform_alt_test(list(pop1), outcome, measures, contrast, "parametric", FALSE)
 ```
 
 #### That was a lot! But now that we know what we're working with extending to two populations will be no problem!
@@ -252,7 +252,7 @@ Now that we know what we're doing, implementing this is a lot easier. All we nee
 contrast <- matrix(c(1, -1, 0, 1, -1, 0,
                      1, 0, -1, 1, 0, -1), nrow = 2, ncol = 6, byrow = T)
 
-perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
+perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric", FALSE)
 ```
 
 #### Following the same logic, if we want to average across another gwas, all we need to do is change the "measures" option:
@@ -263,7 +263,7 @@ contrast <- matrix(c(1, -1, 0, 1, -1, 0,
                      1, 0, -1, 1, 0, -1), nrow = 2, ncol = 6, byrow = T)
 
 measures <- c("gwas2_methodA", "gwas2_methodB",  "gwas2_methodC")
-perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
+perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric", FALSE)
 ```
 
 We can also fully average across all the gwas options and the populations:
@@ -279,6 +279,6 @@ measures <- c("gwas1_methodA", "gwas1_methodB",  "gwas1_methodC",
 contrast <- matrix( c(rep(c(1, -1, 0, 1, -1, 0),4),
                      rep(c(1, 0, -1, 1, 0, -1), 4)), nrow = 2, ncol = 24, byrow = T)
 
-perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric")
+perform_alt_test(list(pop1, pop2), outcome, measures, contrast, "parametric", FALSE)
 ```
 

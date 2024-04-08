@@ -4,7 +4,7 @@
 \alias{perform_alt_test}
 \title{Perform User-Specified Hypothesis Test}
 \usage{
-perform_alt_test(dat_list, outcome, measures, contrast, method, B)
+perform_alt_test(dat_list, outcome, measures, contrast, method, print, B)
 }
 \arguments{
 \item{dat_list}{list of data frames, where each data frame refers to a separate population sample}
@@ -16,6 +16,8 @@ perform_alt_test(dat_list, outcome, measures, contrast, method, B)
 \item{contrast}{contrast matrix to generate hypothesis test}
 
 \item{method}{to request parametric ("parametric") or bootstrap implementation ("boot") of covariance matrix V}
+
+\item{print}{TRUE or FALSE to request print statements}
 
 \item{B}{number of bootstraps if method == "boot" is chosen}
 }
